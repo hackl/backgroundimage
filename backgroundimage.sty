@@ -1,0 +1,73 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{backgroundimage}[2023/06/29 Enable Background Images in LaTeX]
+
+\RequirePackage{ifthen}
+
+\RequirePackage{graphicx} % Images
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+
+\RequirePackage{kvoptions}
+
+\RequirePackage{keyval}
+
+\RequirePackage{calc}
+
+\RequirePackage{eso-pic}
+
+\SetupKeyvalOptions{%
+  family=bgimage,
+  prefix=bgimage@
+}
+
+\DeclareBoolOption[false]{draft}
+
+\DeclareBoolOption[false]{beamer}
+
+\ProcessKeyvalOptions*
+
+\newlength{\backgroundimage@ratio@image}
+\newlength{\backgroundimage@ratio@slide}
+\newlength{\backgroundimage@xshift}
+\newlength{\backgroundimage@yshift}
+
+\newsavebox{\image}
+
+\define@key{backgroundimage}{defaultname}{\def\backgroundimage@defaultname{#1}}
+\define@key{backgroundimage}{xshift}{\setlength\backgroundimage@xshift{#1}}
+\define@key{backgroundimage}{yshift}{\setlength\backgroundimage@yshift{#1}}
+
+\setkeys{backgroundimage}{defaultname=example-image-a,xshift=0pt,yshift=0pt}%
+
+\NewDocumentCommand{\backgroundimage}{s o m}{
+
+\IfValueTF {#2}{\setkeys{backgroundimage}{#2}}{}
+
+\IfFileExists{#3}{\setkeys{backgroundimage}{defaultname=#3}}{}
+
+\sbox{\image}{\includegraphics{\backgroundimage@defaultname}}%
+
+\setlength{\backgroundimage@ratio@image}{1pt *\ratio{\wd\image}{\ht\image}}
+\setlength{\backgroundimage@ratio@slide}{1pt *\ratio{\paperwidth}{\paperheight}}
+
+\usebackgroundtemplate{
+%\AddToShipoutPictureBG{
+    \begin{tikzpicture}[remember picture,overlay]
+
+\node[opacity=1] at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
+
+\ifthenelse{\lengthtest{\backgroundimage@ratio@image>\backgroundimage@ratio@slide}}
+{%
+  \includegraphics[height=\paperheight]{\backgroundimage@defaultname}%
+}{%
+  \includegraphics[width=\paperwidth]{\backgroundimage@defaultname}%
+}% end if
+
+};% end tikz node
+
+\end{tikzpicture}
+}% end NewDocumentCommand
+
+}

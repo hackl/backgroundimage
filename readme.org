@@ -1,0 +1,35 @@
+# =============================================================================
+# File      : readme.org -- Readme of the princeton tex template
+# Author    : Jürgen Hackl <hackl@princeton.edu>
+# Time-stamp: <Fri 2024-05-03 16:24 juergen>
+# Copyright (c) 2023 Jürgen Hackl <hackl@princeton.edu>
+# =============================================================================
+#+OPTIONS: toc:nil
+#+OPTIONS: num:t
+#+OPTIONS: tags:nil
+#+TITLE: backgroundimage
+#+SUBTITLE: LaTeX library for background images
+#+AUTHOR: Jürgen Hackl
+#+EMAIL: <hackl@princeton.edu>
+
+# -----------------------------------------------------------------------------
+#+LATEX_COMPILER: lualatex
+#+LATEX_CLASS: princeton
+#+LATEX_CLASS_OPTIONS: [11pt]
+# =============================================================================
+* Introduction
+* Installation
+
+Installation for development on MacOS. 
+
+1. Create local path for custom latex classes
+
+#+begin_src 
+mkdir /Users/juergen/Library/texmf/tex/latex/
+#+end_src 
+
+2. Make symbolic link to the class file
+
+#+begin_src
+ln -s /Users/juergen/dev/backgroundimage/backgroundimage.sty /Users/juergen/Library/texmf/tex/latex/
+#+end_src

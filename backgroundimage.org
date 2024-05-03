@@ -1,0 +1,213 @@
+#+TITLE: LaTeX Library for background images
+#+AUTHOR: Juergen Hackl
+#+BABEL: :cache yes
+#+PROPERTY: header-args :tangle yes
+#+PROPERTY: header-args :exports none
+#+PROPERTY: header-args :tangle "backgroundimage.sty"
+#+auto_tangle: t
+
+* Introduction
+
+This package is for placing background images in latex documents. Main use is for latex beamer class where a frame should have a full background image.
+
+
+#+begin_src latex :exports code :tangle no
+Shows \latex sorce code which is not in tangle file
+#+end_src
+
+* Setup
+
+#+begin_src latex :exports none
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{backgroundimage}[2023/06/29 Enable Background Images in LaTeX]
+#+end_src
+
+** Packages
+
+#+begin_src latex :exports none
+\RequirePackage{ifthen}
+#+end_src
+
+#+begin_src latex :exports none
+\RequirePackage{graphicx} % Images
+#+end_src
+
+#+begin_src latex :exports none
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+#+end_src
+
+#+begin_src latex :exports none
+\RequirePackage{kvoptions}
+#+end_src
+
+#+begin_src latex :exports none
+\RequirePackage{keyval}
+#+end_src
+
+#+begin_src latex :exports none
+\RequirePackage{calc}
+#+end_src
+
+#+begin_src latex :exports none
+\RequirePackage{eso-pic}
+#+end_src
+
+Package options are notated with ~bgimage~. 
+
+#+begin_src latex :exports none
+\SetupKeyvalOptions{%
+  family=bgimage,
+  prefix=bgimage@
+}
+#+end_src
+
+
+** Package Options
+
+In the following section the package options are defined for ~backgroundimage~.
+
+*** Draft
+
+The draft options allows to render test images to speed up the compilation of the document.
+
+#+begin_src latex :exports none
+\DeclareBoolOption[false]{draft}
+#+end_src
+
+*** Beamer
+
+Change to the beamer mode.
+
+#+begin_src latex :exports none
+\DeclareBoolOption[false]{beamer}
+#+end_src
+
+#+begin_src latex :exports none
+\ProcessKeyvalOptions*
+#+end_src
+
+
+
+* Backgroundimage
+
+Function for the background image
+
+** Initialize length values
+
+#+begin_src latex :exports none
+  \newlength{\backgroundimage@ratio@image}
+  \newlength{\backgroundimage@ratio@slide}
+  \newlength{\backgroundimage@xshift}
+  \newlength{\backgroundimage@yshift}
+#+end_src
+
+#+begin_src latex :exports none
+  \newsavebox{\image}
+#+end_src
+** Definition of key values
+
+- flip: horizontal,vertical, both
+
+- aspectratio: true
+
+- height:0 mm
+
+- width: 0mm
+
+- xshift: 0mm
+
+- yshift: 0mm
+
+- aligned: left, right, top, bottom
+
+#+begin_src latex :exports none
+  \define@key{backgroundimage}{defaultname}{\def\backgroundimage@defaultname{#1}}
+  \define@key{backgroundimage}{xshift}{\setlength\backgroundimage@xshift{#1}}
+  \define@key{backgroundimage}{yshift}{\setlength\backgroundimage@yshift{#1}}
+#+end_src
+
+** Set default key values
+
+#+begin_src latex :exports none
+\setkeys{backgroundimage}{defaultname=example-image-a,xshift=0pt,yshift=0pt}%
+#+end_src
+
+** Function
+
+The ~\backgroundimage~ follows the following syntax
+
+#+begin_src latex :exports code :tangle no
+\backgroundimage*[<optinal-args>]{<image-name>}
+#+end_src
+
+
+- star: on all pages
+
+#+begin_src latex :exports none
+\NewDocumentCommand{\backgroundimage}{s o m}{
+#+end_src
+
+*** Update key values
+
+#+begin_src latex :exports none
+\IfValueTF {#2}{\setkeys{backgroundimage}{#2}}{}
+#+end_src
+
+*** TODO Check if image exists
+
+FIX problem with file extensions. Currently only full image name is supported (e.g. .jpeg must be added)
+
+#+begin_src latex :exports none
+  \IfFileExists{#3}{\setkeys{backgroundimage}{defaultname=#3}}{}
+#+end_src
+
+
+*** TODO Check image and page aspectratio
+Create box to get dimension of the raw image
+#+begin_src latex :exports none
+  \sbox{\image}{\includegraphics{\backgroundimage@defaultname}}%
+#+end_src
+
+Calculate aspectratio of the image and the page
+
+#+begin_src latex :exports none
+  \setlength{\backgroundimage@ratio@image}{1pt *\ratio{\wd\image}{\ht\image}}
+  \setlength{\backgroundimage@ratio@slide}{1pt *\ratio{\paperwidth}{\paperheight}}
+#+end_src
+
+
+*** TikZ Image
+
+#+begin_src latex :exports none
+  \usebackgroundtemplate{
+%\AddToShipoutPictureBG{
+    \begin{tikzpicture}[remember picture,overlay]
+#+end_src
+
+#+begin_src latex :exports none
+  \node[opacity=1] at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
+#+end_src
+#+begin_src latex :exports none
+  \ifthenelse{\lengthtest{\backgroundimage@ratio@image>\backgroundimage@ratio@slide}}
+  {%
+    \includegraphics[height=\paperheight]{\backgroundimage@defaultname}%
+  }{%
+    \includegraphics[width=\paperwidth]{\backgroundimage@defaultname}%
+  }% end if
+#+end_src
+
+#+begin_src latex :exports none
+  };% end tikz node 
+#+end_src
+
+#+begin_src latex :exports none
+  \end{tikzpicture}
+  }% end NewDocumentCommand
+#+end_src
+
+
+#+begin_src latex :exports none
+}
+#+end_src
