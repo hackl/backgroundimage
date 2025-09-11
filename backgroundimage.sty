@@ -38,8 +38,9 @@
 \define@key{backgroundimage}{defaultname}{\def\backgroundimage@defaultname{#1}}
 \define@key{backgroundimage}{xshift}{\setlength\backgroundimage@xshift{#1}}
 \define@key{backgroundimage}{yshift}{\setlength\backgroundimage@yshift{#1}}
+\define@key{backgroundimage}{opacity}{\def\backgroundimage@opacity{#1}}
 
-\setkeys{backgroundimage}{defaultname=example-image-a,xshift=0pt,yshift=0pt}%
+\setkeys{backgroundimage}{defaultname=example-image-a,xshift=0pt,yshift=0pt,opacity=1}%
 
 \NewDocumentCommand{\backgroundimage}{s o m}{
 
@@ -56,7 +57,7 @@
 %\AddToShipoutPictureBG{
     \begin{tikzpicture}[remember picture,overlay]
 
-\node[opacity=1] at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
+\node[opacity=\backgroundimage@opacity] at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
 
 \ifthenelse{\lengthtest{\backgroundimage@ratio@image>\backgroundimage@ratio@slide}}
 {%
