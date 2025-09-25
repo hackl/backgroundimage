@@ -57,7 +57,7 @@
 %\AddToShipoutPictureBG{
     \begin{tikzpicture}[remember picture,overlay]
 
-\node[opacity=\backgroundimage@opacity] at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
+\node at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
 
 \ifthenelse{\lengthtest{\backgroundimage@ratio@image>\backgroundimage@ratio@slide}}
 {%
@@ -67,6 +67,8 @@
 }% end if
 
 };% end tikz node
+
+\fill[white,opacity=1-\backgroundimage@opacity] (current page.north east) rectangle (current page.south west);
 
 \end{tikzpicture}
 }% end NewDocumentCommand

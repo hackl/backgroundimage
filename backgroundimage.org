@@ -188,7 +188,7 @@ Calculate aspectratio of the image and the page
 #+end_src
 
 #+begin_src latex :exports none
-  \node[opacity=\backgroundimage@opacity] at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
+  \node at ($(current page.center)-(\backgroundimage@xshift,\backgroundimage@yshift)$) {%
 #+end_src
 #+begin_src latex :exports none
   \ifthenelse{\lengthtest{\backgroundimage@ratio@image>\backgroundimage@ratio@slide}}
@@ -201,6 +201,12 @@ Calculate aspectratio of the image and the page
 
 #+begin_src latex :exports none
   };% end tikz node 
+#+end_src
+
+Fix opacity using a white background
+
+#+begin_src latex :exports none
+\fill[white,opacity=1-\backgroundimage@opacity] (current page.north east) rectangle (current page.south west);
 #+end_src
 
 #+begin_src latex :exports none
